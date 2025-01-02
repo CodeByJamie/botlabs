@@ -56,10 +56,11 @@ async function fetchCommands(client) {
 				commands.push(commandFile.data.toJSON());
 				client.commands.set(commandFile.data.name, commandFile);
 			} else {
-				console.warn(`[commandHandler.js - fetchCommands]: The ${subFile} is missing the data or execute method.`);
+				console.warn(`[commandHandler.js - fetchCommands]: The ${commandFile} is missing the data or execute method.`);
 			}
 		}
 	}
+	// If there are commands stored, register them
 	if (commands.length > 0) await registerCommands(client);
 }
 
@@ -67,11 +68,13 @@ async function registerCommands(client) {
 	// Construct the rest object
 	const rest = new dependencies.discordjs.REST().setToken(process.env.CLIENT_TOKEN);
 
+	// Try to register the commands on the discord API
 	try {
 		const data = await rest.put(dependencies.discordjs.Routes.applicationGuildCommands(client.user.id, process.env.GUILD_ID), {
 			body: commands,
 		});
 
+		// if the data exists in the commands display a success message
 		if (data) console.log(`[commandHandler.js - registerCommands()]: Successfully registered application commands.`);
 	} catch (error) {
 		console.error(`[commandHandler.js - registerCommands()]: ${error}`);
@@ -79,11 +82,14 @@ async function registerCommands(client) {
 }
 
 async function runCommands(client, interaction) {
+	// Fetch the command that is trying to be ran
 	const command = client.commands.get(interaction.commandName);
 
+	// if the command doesn't exist anymore, display an error.
 	if (!command) console.error('command not found');
 
 	try {
+		 // 
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(`[commandHandler.js - runCommands()]: ${error}`);
