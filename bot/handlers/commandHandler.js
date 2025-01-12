@@ -16,7 +16,6 @@ async function fetchCommands(client) {
 
 	// Check if there are any files / folders in the directory
 	if (!commandFiles || commandFiles.length === 0) return console.warn(`No files / folders found in the command directory.`);
-
 	for (const file of commandFiles) {
 		// Fetch the path of the folder / file
 		const commandPath = dependencies.path.join(commandDirectory, file);
@@ -33,11 +32,11 @@ async function fetchCommands(client) {
 				const subCommandPath = dependencies.path.join(commandPath, subFile);
 
 				const command = require(subCommandPath);
-
 				// Check if the sub file is a valid command
 				if ('data' in command && 'execute' in command) {
 					commands.push(command.data.toJSON());
 					client.commands.set(command.data.name, command);
+					console.log(commands)
 				} else {
 					console.warn(
 						`[commandHandler.js - fetchCommands]: The ${subFile} is missing the data or execute method.`
@@ -51,10 +50,13 @@ async function fetchCommands(client) {
 
 			const commandFile = require(commandPath);
 
+			console.log(commandFile)
+			
 			// Check if the file is a valid command
 			if ('data' in commandFile && 'execute' in commandFile) {
 				commands.push(commandFile.data.toJSON());
 				client.commands.set(commandFile.data.name, commandFile);
+				console.log(commandFile)
 			} else {
 				console.warn(`[commandHandler.js - fetchCommands]: The ${commandFile} is missing the data or execute method.`);
 			}
@@ -89,7 +91,7 @@ async function runCommands(client, interaction) {
 	if (!command) console.error('command not found');
 
 	try {
-		 // 
+		
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(`[commandHandler.js - runCommands()]: ${error}`);

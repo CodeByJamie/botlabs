@@ -10,7 +10,7 @@ async function ConnectToDatabase(name) {
 	if (!process.env.MONGO_URI) return null(console.error(`There is no connection string stored for ${name}`));
 
 	// Connect to the database
-	const connection =   dependencies.mongoose.createConnection(process.env.MONGO_URI);
+	const connection = dependencies.mongoose.createConnection(process.env.MONGO_URI);
 
 	if (connection) {
 		console.log(`Successfully connected to the ${name} database!`);
